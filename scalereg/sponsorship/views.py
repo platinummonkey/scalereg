@@ -53,7 +53,7 @@ def ApplyPromoToItems(promo, items):
 def ApplyPromoToPostedItems(package, promo, post):
   avail_items = GetPackageItems(package)
   selected_items = []
-  for i in xrange(len(avail_items)):
+  for i in range(len(avail_items)):
     item_number = 'item%d' % i
     if item_number in post:
       try:
@@ -293,13 +293,13 @@ def Payment(request):
     return HttpResponseRedirect('/sponsorship/')
   r = CheckReferrer(request.META, '/sponsorship/add_sponsor/')
   if r:
-    print 'fail1'
+    print('fail1')
     return r
 
   required_cookies = ['sponsor']
   r = CheckVars(request, [], required_cookies)
   if r:
-    print 'fail2'
+    print('fail2')
     return r
 
   sponsor = None
@@ -322,7 +322,7 @@ def Payment(request):
       bad_order_nums = [ x.order_num for x in models.TempOrder.objects.all() ]
       bad_order_nums += [ x.order_num for x in models.Order.objects.all() ]
       order_num = GenerateOrderID(bad_order_nums)
-      print order_num
+      print(order_num)
       temp_order = models.TempOrder(order_num=order_num, sponsor=sponsor)
       temp_order.save()
       break
@@ -427,7 +427,7 @@ def Sale(request):
         sponsor=sponsor,
         already_paid_sponsor=already_paid_sponsor)
     order.save()
-  except Exception, inst: # FIXME catch the specific db exceptions
+  except Exception as inst: # FIXME catch the specific db exceptions
     ScaleDebug('cannot save order')
     ScaleDebug(inst.args)
     ScaleDebug(inst)

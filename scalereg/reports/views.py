@@ -1,6 +1,6 @@
 # Create your views here.
 
-from __future__ import division
+
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
@@ -27,7 +27,7 @@ class Filter:
     self.selected = -1
 
   def get_items(self):
-    items = self.items.items()
+    items = list(self.items.items())
     items.sort()
     return [v[1] for v in items]
 
@@ -135,7 +135,7 @@ def object_list(request, queryset, paginate_by=None, page=None,
     extra_context['field_list'] = all_fields
 
   filter_select = {}
-  for i in xrange(len(all_fields)):
+  for i in range(len(all_fields)):
     name = all_fields[i]
     filter = Filter(name)
     field_type = type(queryset.model._meta.fields[i])
@@ -165,7 +165,7 @@ def object_list(request, queryset, paginate_by=None, page=None,
           filter.selected = value
           query_string = '%s = %%s' % paranoid_strip(name)
           queryset = queryset.extra(where=[query_string], params=[value])
-  extra_context['filter_select'] = filter_select.values()
+  extra_context['filter_select'] = list(filter_select.values())
   extra_context['urlpart'] = ''.join([part for part in urlparts])
 
   extra_context['numbers'] = queryset.count()
@@ -227,12 +227,12 @@ def dashboard(request):
     if att_ticket not in ticket_attendees_data:
       ticket_attendees_data[att_ticket] = Count(att_ticket)
     ticket_attendees_data[att_ticket].count += 1
-  type_attendees_data = type_attendees_data.items()
+  type_attendees_data = list(type_attendees_data.items())
   type_attendees_data.sort()
   type_attendees_data = [v[1] for v in type_attendees_data]
   for t in type_attendees_data:
     t.CalcPercentage(num_attendees)
-  ticket_attendees_data = ticket_attendees_data.items()
+  ticket_attendees_data = list(ticket_attendees_data.items())
   ticket_attendees_data.sort()
   ticket_attendees_data = [v[1] for v in ticket_attendees_data]
   for t in ticket_attendees_data:
@@ -248,7 +248,7 @@ def dashboard(request):
     if promo not in promo_attendees_data:
       promo_attendees_data[promo] = Count(promo)
     promo_attendees_data[promo].count += 1
-  promo_attendees_data = promo_attendees_data.items()
+  promo_attendees_data = list(promo_attendees_data.items())
   promo_attendees_data.sort()
   promo_attendees_data = [v[1] for v in promo_attendees_data]
   for p in promo_attendees_data:
@@ -259,7 +259,7 @@ def dashboard(request):
     if x.zip not in zipcode_orders_data:
       zipcode_orders_data[x.zip] = Count(x.zip)
     zipcode_orders_data[x.zip].count += 1
-  zipcode_orders_data = zipcode_orders_data.items()
+  zipcode_orders_data = list(zipcode_orders_data.items())
   zipcode_orders_data.sort()
   zipcode_orders_data = [v[1] for v in zipcode_orders_data]
   for zip in zipcode_orders_data:
@@ -270,7 +270,7 @@ def dashboard(request):
     if att.zip not in zipcode_attendees_data:
       zipcode_attendees_data[att.zip] = Count(att.zip)
     zipcode_attendees_data[att.zip].count += 1
-  zipcode_attendees_data = zipcode_attendees_data.items()
+  zipcode_attendees_data = list(zipcode_attendees_data.items())
   zipcode_attendees_data.sort()
   zipcode_attendees_data = [v[1] for v in zipcode_attendees_data]
   for zip in zipcode_attendees_data:
@@ -312,7 +312,7 @@ def dashboard(request):
       if add.name not in addon_attendees_data:
         addon_attendees_data[add.name] = Count(add.name)
       addon_attendees_data[add.name].count += 1
-  addon_attendees_data = addon_attendees_data.items()
+  addon_attendees_data = list(addon_attendees_data.items())
   addon_attendees_data.sort()
   addon_attendees_data = [v[1] for v in addon_attendees_data]
   for zip in addon_attendees_data:

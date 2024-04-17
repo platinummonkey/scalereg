@@ -15,4 +15,4 @@ class Service(models.Model):
   groups = models.ManyToManyField(Group, blank=True)
 
   def __unicode__(self):
-    return u'%s' % self.name
+    return '%s' % self.name

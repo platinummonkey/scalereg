@@ -40,7 +40,7 @@ class Order(models.Model):
   already_paid_sponsor = models.BooleanField(default=False)
 
   def __unicode__(self):
-    return u'%s' % self.order_num
+    return '%s' % self.order_num
 
   def save(self, *args, **kwargs):
     validators.CheckNotNegative(self.amount, self)
@@ -115,7 +115,7 @@ class Package(models.Model):
     return True
 
   def __unicode__(self):
-    return u'%s' % self.name
+    return '%s' % self.name
 
   def save(self, *args, **kwargs):
     validators.CheckAllCapsDigits(self.name, self)
@@ -204,7 +204,7 @@ class Item(models.Model):
       help_text='Applies to all packages')
 
   def __unicode__(self):
-    return u'%s (%s)' % (self.description, self.name)
+    return '%s (%s)' % (self.description, self.name)
 
   def save(self, *args, **kwargs):
     validators.CheckAllCapsDigits(self.name, self)
@@ -257,4 +257,4 @@ class Sponsor(models.Model):
     return '%s - %s %s' % (self.org, self.first_name, self.last_name)
 
   def __unicode__(self):
-    return u'%s (%s) ' % (self.id, self.email)
+    return '%s (%s) ' % (self.id, self.email)

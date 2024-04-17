@@ -15,7 +15,7 @@ from scalereg.sponsorship import views as sponsorship_views
 import datetime
 import re
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 STEPS_TOTAL = 7
 
@@ -114,11 +114,11 @@ def PrintAttendee(attendee, reprint_ids, ksp_ids, qpgp):
     ksp = attendee.id in ksp_ids
     has_pgp_text = 'NO PGP'
     all_pgp_text = []
-    for i in xrange(0, settings.SCALEREG_PGP_MAX_KEYS):
+    for i in range(0, settings.SCALEREG_PGP_MAX_KEYS):
       all_pgp_text.append('NO PGP KEY %d' % (i + 1))
     if ksp:
       has_pgp_text = 'PGP'
-      for i in xrange(0, settings.SCALEREG_PGP_MAX_KEYS):
+      for i in range(0, settings.SCALEREG_PGP_MAX_KEYS):
         pgp_text = GetPGPText(attendee, qpgp, i + 1)
         if pgp_text:
           all_pgp_text[i] = pgp_text
@@ -149,7 +149,7 @@ def ApplyPromoToItems(promo, items):
 def ApplyPromoToPostedItems(ticket, promo, post):
   avail_items = GetTicketItems(ticket)
   selected_items = []
-  for i in xrange(len(avail_items)):
+  for i in range(len(avail_items)):
     item_number = 'item%d' % i
     if item_number in post:
       try:
@@ -693,7 +693,7 @@ def AddAttendee(request):
     pgp_question1_index = GetPGPKeyQuestionIndex(1)
     pgp_question2_index = pgp_question1_index + PGP_KEY_QUESTION_INDEX_OFFSET
 
-    q_range = range(len(questions))
+    q_range = list(range(len(questions)))
     q_range.reverse()
     pgp_question_start = pgp_question1_index
     pgp_question_end = pgp_question_start + GetPGPTotalQuestions()
@@ -868,7 +868,7 @@ def Payment(request):
       attendees_by_ticket[person.badge_type] = 1
     RecordAttendeeAgent(person, user_agent)
   tickets_soldout = []
-  for ticket, num_to_buy in attendees_by_ticket.iteritems():
+  for ticket, num_to_buy in attendees_by_ticket.items():
     if not IsTicketAvailable(ticket, num_to_buy):
       tickets_soldout.append(ticket.description)
   if tickets_soldout:
@@ -1038,9 +1038,9 @@ def Sale(request):
     order.save()
     for attendee in already_paid_attendees_data:
       order.already_paid_attendees.add(attendee)
-  except Exception, inst: # FIXME catch the specific db exceptions
+  except Exception as inst: # FIXME catch the specific db exceptions
     ScaleDebug('cannot save order')
-    print inst
+    print(inst)
     ScaleDebug(inst.args)
     ScaleDebug(inst)
     return HttpResponseServerError('cannot save order')
@@ -1619,7 +1619,7 @@ def AddCoupon(request):
 
   if request.method == 'GET':
     tickets = []
-    for ticket_type in ticket_types.keys():
+    for ticket_type in list(ticket_types.keys()):
       temp_tickets = models.Ticket.objects.filter(type=ticket_type)
       for t in temp_tickets:
         tickets.append(t)
@@ -1703,7 +1703,7 @@ def CheckedIn(request):
     ksp_ids = [attendee.id for attendee in ksp_attendees]
     num_questions = GetPGPTotalQuestions()
     base_question_id = GetPGPKeyQuestionIndex(1)
-    for i in xrange(base_question_id, base_question_id + num_questions):
+    for i in range(base_question_id, base_question_id + num_questions):
       qpgp.append(models.Question.objects.get(id=i))
 
   if request.method == 'POST':
@@ -1993,7 +1993,7 @@ def ScannedBadge(request):
   if 'CODE' in request.GET and 'SIZE' in request.GET:
     code = request.GET['CODE']
     size = request.GET['SIZE']
-    code_split = urllib.unquote(code).split('~')
+    code_split = urllib.parse.unquote(code).split('~')
     try:
       attendee_id = int(code_split[0][:-1])
       validators.isValidScannedBadge(code_split[0], None)
@@ -2026,7 +2026,7 @@ def ScannedBadge(request):
         response = 'Database error'
 
   returl = 'https://%s/reg6/scanned_badge/?CODE={CODE}' % request.get_host()
-  url = 'zxing://scan/?ret=%s' % urllib.quote_plus(returl)
+  url = 'zxing://scan/?ret=%s' % urllib.parse.quote_plus(returl)
   return render_to_response('reg6/scanned_badge.html',
     {'color': color,
      'response': response,

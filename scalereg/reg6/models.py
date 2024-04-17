@@ -69,7 +69,7 @@ class Order(models.Model):
     permissions = (('view_order', 'Can view order'),)
 
   def __unicode__(self):
-    return u'%s' % self.order_num
+    return '%s' % self.order_num
 
   def save(self, *args, **kwargs):
     validators.isNotNegative(self.amount, self)
@@ -155,7 +155,7 @@ class Ticket(models.Model):
     permissions = (('view_ticket', 'Can view ticket'),)
 
   def __unicode__(self):
-    return u'%s' % self.name
+    return '%s' % self.name
 
   def save(self, *args, **kwargs):
     validators.isAllCapsDigits(self.name, self)
@@ -251,7 +251,7 @@ class Item(models.Model):
     permissions = (('view_item', 'Can view item'),)
 
   def __unicode__(self):
-    return u'%s (%s)' % (self.description, self.name)
+    return '%s (%s)' % (self.description, self.name)
 
   def save(self, *args, **kwargs):
     validators.isAllCapsDigits(self.name, self)
@@ -273,7 +273,7 @@ class Answer(models.Model):
     return '%s' % self.text
 
   def __unicode__(self):
-    return u'(%d) %s' % (self.question.id, self.__str_text__())
+    return '(%d) %s' % (self.question.id, self.__str_text__())
 
 
 class ListAnswer(Answer):
@@ -301,8 +301,8 @@ class Question(models.Model):
 
   def __unicode__(self):
     if len(self.text) > 37:
-      return u'%s...' % self.text[:37]
-    return u'%s' % self.text
+      return '%s...' % self.text[:37]
+    return '%s' % self.text
 
 
 class ListQuestion(Question):
@@ -356,7 +356,7 @@ class Attendee(models.Model):
     permissions = (('view_attendee', 'Can view attendee'),)
 
   def __unicode__(self):
-    return u'%s (%s) ' % (self.id, self.email)
+    return '%s (%s) ' % (self.id, self.email)
 
   def save(self, *args, **kwargs):
     validators.isValidAttendeeCheckin(self.checked_in, self)
