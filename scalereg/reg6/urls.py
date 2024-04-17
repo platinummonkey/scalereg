@@ -1,4 +1,5 @@
 from django.conf.urls import *
+
 from scalereg.reg6 import views as reg6_views
 
 urlpatterns = [

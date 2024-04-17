@@ -1,6 +1,8 @@
-from django.db import models
-from scalereg.reg6 import validators
 import datetime
+
+from django.db import models
+
+from scalereg.reg6 import validators
 
 SALUTATION_CHOICES = (
   ('Mr', 'Mr.'),

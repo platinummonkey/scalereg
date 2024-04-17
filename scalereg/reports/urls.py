@@ -1,4 +1,5 @@
 from django.conf.urls import *
+
 from scalereg.reg6 import models
 from scalereg.reports import views as reports_views
 

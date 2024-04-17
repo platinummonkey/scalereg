@@ -1,4 +1,5 @@
 from django.conf.urls import *
+
 from scalereg.sponsorship import views as sponsorship_view
 
 urlpatterns = [

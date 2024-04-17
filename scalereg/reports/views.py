@@ -1,22 +1,23 @@
 # Create your views here.
 
 
+import datetime
+import inspect
+import re
+import string
+
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.db.models import BooleanField
 from django.db.models.base import ModelBase
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import loader
 from django.views.generic.list import ListView as django_object_list
+
 from scalereg.common.utils import services_perm_checker
 from scalereg.reg6 import models
-import datetime
-import inspect
-import re
-import string
 
 PGP_KEY_QUESTION_INDEX_OFFSET = 3
 

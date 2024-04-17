@@ -1,6 +1,7 @@
-from django.forms import BooleanField
-from django.forms import ModelForm
+from django.forms import BooleanField, ModelForm
+
 from scalereg.sponsorship.models import Sponsor
+
 
 class SponsorForm(ModelForm):
   class Meta:

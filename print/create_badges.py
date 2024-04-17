@@ -1,9 +1,10 @@
 #!/usr/bin/python
 
 import datetime
-import gd
 import os
 import subprocess
+
+import gd
 
 
 class Badge:

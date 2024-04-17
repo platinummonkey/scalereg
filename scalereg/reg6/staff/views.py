@@ -1,15 +1,14 @@
 # Create your views here.
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
+
 from scalereg.common.utils import services_perm_checker
 from scalereg.common.views import handler500
 from scalereg.reg6 import models
-from scalereg.reg6 import validators
-from scalereg.reg6.views import GenerateOrderID
-from scalereg.reg6.views import NotifyAttendee
+from scalereg.reg6.views import GenerateOrderID, NotifyAttendee
+
 
 @login_required
 def index(request):
@@ -203,7 +202,7 @@ def CashPaymentRegistered(request):
   if request.method == 'GET':
     return handler500(request, msg='POST only.')
 
-  if not 'id' in request.POST or not request.POST['id']:
+  if 'id' not in request.POST or not request.POST['id']:
     return handler500(request, msg='missing data: no %s field' % var)
 
   try:
@@ -211,7 +210,7 @@ def CashPaymentRegistered(request):
   except:
     return handler500(request, msg='cannot find attendee')
 
-  if not 'action' in request.POST or request.POST['action'] != 'pay':
+  if 'action' not in request.POST or request.POST['action'] != 'pay':
     return render_to_response('reg6/staff/cash_registered.html',
       {'title': 'Cash Payment For Registered Attendee',
        'attendee': attendee,
@@ -260,7 +259,7 @@ def Email(request):
     return HttpResponseRedirect('/reg6/staff/checkin/')
 
   EMAIL_TEMPLATE = 'reg6/staff/email.html'
-  if not 'id' in request.POST or not request.POST['id']:
+  if 'id' not in request.POST or not request.POST['id']:
     return render_to_response(EMAIL_TEMPLATE,
       {'title': 'Attendee Email Invalid',
        'attendee': None,
@@ -325,7 +324,7 @@ def UpdateAttendee(request):
   if request.method == 'GET':
     return handler500(request, msg='POST only.')
 
-  if not 'id' in request.POST or not request.POST['id']:
+  if 'id' not in request.POST or not request.POST['id']:
     return handler500(request, msg='missing data: no %s field' % var)
 
   try:
@@ -333,7 +332,7 @@ def UpdateAttendee(request):
   except:
     return handler500(request, msg='cannot find attendee')
 
-  if not 'action' in request.POST or request.POST['action'] != 'update':
+  if 'action' not in request.POST or request.POST['action'] != 'update':
     return render_to_response('reg6/staff/update_attendee.html',
       {'title': 'Update Attendee',
        'attendee': attendee,

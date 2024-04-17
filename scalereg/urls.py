@@ -12,13 +12,12 @@ Class-based views
 Including another URLconf
     1. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import include
-from django.conf.urls import url
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as django_auth_views
 from django.views.generic import RedirectView
-from scalereg.auth_helper import views as auth_helper_views
 
+from scalereg.auth_helper import views as auth_helper_views
 
 urlpatterns = [
     url(r'^accounts/$', auth_helper_views.index),

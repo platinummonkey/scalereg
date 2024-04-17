@@ -1,8 +1,11 @@
-from django.conf import settings
-from scalereg.common.validators import ScaleValidationError
 import hashlib
-from . import models
 import string
+
+from django.conf import settings
+
+from scalereg.common.validators import ScaleValidationError
+
+from . import models
 
 HASH_LENGTH = 6
 

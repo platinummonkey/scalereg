@@ -1,21 +1,20 @@
 # Create your views here.
 
+import datetime
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from django.http import HttpResponseServerError
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
 from django.shortcuts import render_to_response
+
 from scalereg.common import utils
-from scalereg.reg6 import forms
-from scalereg.reg6 import models
-from scalereg.reg6 import validators
+from scalereg.reg6 import forms, models, validators
 from scalereg.sponsorship import views as sponsorship_views
-import datetime
-import re
-import sys
-import urllib.request, urllib.parse, urllib.error
 
 STEPS_TOTAL = 7
 
@@ -156,7 +155,7 @@ def ApplyPromoToPostedItems(ticket, promo, post):
         item = models.Item.objects.get(name=post[item_number])
       except:
         continue
-      is_item_available = item in avail_items;
+      is_item_available = item in avail_items
       if ShouldIgnoreKSPItem(item, post):
         is_item_available = False
       if is_item_available:
@@ -635,13 +634,13 @@ def AddAttendee(request):
       new_attendee = form.save(commit=False)
 
       # sanitize input
-      new_attendee.first_name = new_attendee.first_name.strip();
-      new_attendee.last_name = new_attendee.last_name.strip();
-      new_attendee.title = new_attendee.title.strip();
-      new_attendee.org = new_attendee.org.strip();
-      new_attendee.email = new_attendee.email.strip();
-      new_attendee.zip = new_attendee.zip.strip();
-      new_attendee.phone = new_attendee.phone.strip();
+      new_attendee.first_name = new_attendee.first_name.strip()
+      new_attendee.last_name = new_attendee.last_name.strip()
+      new_attendee.title = new_attendee.title.strip()
+      new_attendee.org = new_attendee.org.strip()
+      new_attendee.email = new_attendee.email.strip()
+      new_attendee.zip = new_attendee.zip.strip()
+      new_attendee.phone = new_attendee.phone.strip()
 
       # add badge type
       new_attendee.badge_type = ticket
@@ -1130,7 +1129,7 @@ def StartUpgrade(request):
       })
 
   # POST, look for attendee first.
-  if not 'id' in request.POST or not 'email' in request.POST:
+  if 'id' not in request.POST or 'email' not in request.POST:
     return scale_render_to_response(request, 'reg6/reg_start_upgrade.html',
       {'title': 'Registration Upgrade',
       })
@@ -1785,13 +1784,13 @@ def MassAddAttendee(request):
     attendee = form.save(commit=False)
 
     # sanitize input
-    attendee.first_name = attendee.first_name.strip();
-    attendee.last_name = attendee.last_name.strip();
-    attendee.title = attendee.title.strip();
-    attendee.org = attendee.org.strip();
-    attendee.email = attendee.email.strip();
-    attendee.zip = attendee.zip.strip();
-    attendee.phone = attendee.phone.strip();
+    attendee.first_name = attendee.first_name.strip()
+    attendee.last_name = attendee.last_name.strip()
+    attendee.title = attendee.title.strip()
+    attendee.org = attendee.org.strip()
+    attendee.email = attendee.email.strip()
+    attendee.zip = attendee.zip.strip()
+    attendee.phone = attendee.phone.strip()
 
     attendee.valid = True
     attendee.checked_in = False

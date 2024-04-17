@@ -1,17 +1,14 @@
 # Create your views here.
 
-from django.conf import settings
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from django.http import HttpResponseServerError
-from django.shortcuts import render_to_response
-from scalereg.common import utils
-from scalereg.sponsorship import forms
-from scalereg.sponsorship import models
 import datetime
 import sys
 
-from django.http import HttpRequest
+from django.conf import settings
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
+from django.shortcuts import render_to_response
+
+from scalereg.common import utils
+from scalereg.sponsorship import forms, models
 
 STEPS_TOTAL = 5
 

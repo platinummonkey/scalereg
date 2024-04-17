@@ -1,7 +1,7 @@
 from django.forms import ModelForm
-from scalereg.reg6.models import Attendee
-from scalereg.reg6.models import Order
-from scalereg.reg6.models import PromoCode
+
+from scalereg.reg6.models import Attendee, Order, PromoCode
+
 
 class AddCouponForm(ModelForm):
   class Meta:

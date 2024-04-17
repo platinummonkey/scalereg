@@ -1,7 +1,9 @@
-from scalereg.auth_helper.models import Service
 import random
 import re
 import string
+
+from scalereg.auth_helper.models import Service
+
 
 def GenerateID(length):
   valid_chars = string.ascii_uppercase + string.digits

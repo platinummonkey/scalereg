@@ -1,4 +1,5 @@
 from django.conf.urls import *
+
 from scalereg.reg6.staff import views as staff_views
 
 urlpatterns = [
