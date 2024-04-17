@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "scalereg"
+version = "1.0.0"
+description = "Scalereg is the registration system used by SCALE, the Southern California Linux Expo"
+authors = ["Ilan Rabinovitch <ilan@linuxfests.org>"]
+license = "GPL-2.0"
+readme = "README"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+Django = "5.0.4"
+
+[tool.poetry.group.dev.dependencies]
+coverage = "^7.4.4"
+pytest = "^8.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
