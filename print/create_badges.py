@@ -66,7 +66,7 @@ class Badge:
     outimage.string_ft(fontfile, fontsize, 0, (x,y), text, 0)
 
   def genBadge(self):
-    print 'generating badge for code: %05d' % self.id
+    print('generating badge for code: %05d' % self.id)
     try:
       # generate barcode
       barcode_script = os.path.join(self.datadir, 'barcode.sh')
@@ -127,7 +127,7 @@ class Badge:
 
       return out
     except:
-      print 'failed for badge for code: %05d' % self.id
+      print('failed for badge for code: %05d' % self.id)
       raise
       return None
 
@@ -143,14 +143,14 @@ def realFetchDB(datadir):
 
 
 def fakeFetchDB(datadir):
-  print "Using fake data, see fetchDB()"
+  print("Using fake data, see fetchDB()")
   return """~Mr.~John~Doe~Title~Company~sdf@asdf.com~555-555-1212~1~0~expo~130.00~???~~
 ~Salutation~First Name~Last Name~Title~Company~Email~Phone~1324~0~friday~100.00~Large~Foo~Bar~Qux~XYZZY 12345~
 ~Mr.~Lei~Zhang~Slacker~Home~leiz@example.org~6261234567~555~0~staff~50~Medium~
 ~Mr.~John Billy~Scott~President~ACME Incorporated~president@acme.inc~1234567890~999~1~expo~10~Medium~"""
 
 def printRun():
-  print 'Starting print run at %s' % datetime.datetime.today().isoformat(' ')
+  print('Starting print run at %s' % datetime.datetime.today().isoformat(' '))
 
   datadir = os.getcwd()
   attendees = fetchDB(datadir)
@@ -160,10 +160,10 @@ def printRun():
       badge = Badge(att, datadir)
       badge.printBadge()
     except ValueError:
-      print 'Could not generate badge for %s' % att
+      print('Could not generate badge for %s' % att)
       continue
 
-  print 'done'
+  print('done')
 
 
 if __name__ == '__main__':
