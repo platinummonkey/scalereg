@@ -4,6 +4,7 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV = os.environ.get('ENV', 'development')
 
 DEBUG = False
 
@@ -13,6 +14,9 @@ SCALEREG_DEBUG_LOGGING_ENABLED = False
 SCALEREG_DEBUG_LOGGING_PATH = '/tmp/scale_reg.log'
 
 ALLOWED_HOSTS = ['register.socallinuxexpo.org']
+
+if ENV in ('development', 'ci'):
+    ALLOWED_HOSTS += ["127.0.0.1", "localhost"]
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -165,4 +169,3 @@ SCALEREG_ADMIN_TICKETS_FOR_PROMO = []
 #FILE_UPLOAD_MAX_MEMORY_SIZE = 20971520  # 20 MB
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
-
