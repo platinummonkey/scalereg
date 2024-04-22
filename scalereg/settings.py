@@ -84,21 +84,30 @@ ROOT_URLCONF = 'scalereg.urls'
 TEMPLATES = [
   {
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'APP_DIRS': True,
     'DIRS': [
-        BASE_DIR + "scalereg/scale_templates",
-        BASE_DIR + "scalereg/scale_templates/admin",
-        BASE_DIR + "scalereg/scale_templates/profile",
-        BASE_DIR + "scalereg/scale_templates/reg6",
-        BASE_DIR + "scalereg/scale_templates/reports",
-        BASE_DIR + "scalereg/scale_templates/sponsorship",
+        BASE_DIR + "/scalereg/scale_templates",
+        BASE_DIR + "/scalereg/scale_templates/admin",
+        BASE_DIR + "/scalereg/scale_templates/profile",
+        BASE_DIR + "/scalereg/scale_templates/reg6",
+        BASE_DIR + "/scalereg/scale_templates/reg6/staff",
+        BASE_DIR + "/scalereg/scale_templates/reports",
+        BASE_DIR + "/scalereg/scale_templates/sponsorship",
     ],
     'OPTIONS': {
       'context_processors': [
         'django.contrib.messages.context_processors.messages',
         'django.contrib.auth.context_processors.auth',
         'django.template.context_processors.request',
-      ]
+      ],
+      "loaders": [
+        (
+          "django.template.loaders.cached.Loader",
+          [
+            "django.template.loaders.filesystem.Loader",
+            "django.template.loaders.app_directories.Loader",
+          ],
+        ),
+      ],
     },
   },
 ]
