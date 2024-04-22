@@ -15,9 +15,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('text', models.CharField(max_length=200)),
             ],
-            options={
-                'permissions': (('view_answer', 'Can view answer'),),
-            },
         ),
         migrations.CreateModel(
             name='Attendee',
@@ -36,9 +33,6 @@ class Migration(migrations.Migration):
                 ('obtained_items', models.CharField(help_text=b'comma separated list of items', max_length=60, blank=True)),
                 ('can_email', models.BooleanField(default=False)),
             ],
-            options={
-                'permissions': (('view_attendee', 'Can view attendee'),),
-            },
         ),
         migrations.CreateModel(
             name='Coupon',
@@ -48,9 +42,6 @@ class Migration(migrations.Migration):
                 ('max_attendees', models.PositiveSmallIntegerField()),
                 ('expiration', models.DateField(help_text=b'Not usable on this day', null=True, blank=True)),
             ],
-            options={
-                'permissions': (('view_coupon', 'Can view coupon'),),
-            },
         ),
         migrations.CreateModel(
             name='Item',
@@ -65,20 +56,14 @@ class Migration(migrations.Migration):
                 ('ticket_offset', models.BooleanField(default=False, help_text=b'Item offsets ticket price?')),
                 ('applies_to_all', models.BooleanField(default=False, help_text=b'Applies to all tickets')),
             ],
-            options={
-                'permissions': (('view_item', 'Can view item'),),
-            },
         ),
         migrations.CreateModel(
             name='KioskAgent',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('agent', models.CharField(max_length=20)),
-                ('attendee', models.ForeignKey(to='reg6.Attendee')),
+                ('attendee', models.ForeignKey(to='reg6.Attendee', on_delete=models.DO_NOTHING)),
             ],
-            options={
-                'permissions': (('view_kiosk_agent', 'Can view kiosk agent'),),
-            },
         ),
         migrations.CreateModel(
             name='Order',
@@ -102,9 +87,6 @@ class Migration(migrations.Migration):
                 ('result', models.CharField(help_text=b'Only used by Verisign', max_length=60, blank=True)),
                 ('already_paid_attendees', models.ManyToManyField(help_text=b'Attendees charged multiple times on this order', related_name='already_paid', to='reg6.Attendee', blank=True)),
             ],
-            options={
-                'permissions': (('view_order', 'Can view order'),),
-            },
         ),
         migrations.CreateModel(
             name='PromoCode',
@@ -117,9 +99,6 @@ class Migration(migrations.Migration):
                 ('end_date', models.DateField(help_text=b'Not Usable on this day', null=True, blank=True)),
                 ('applies_to_all', models.BooleanField(default=False, help_text=b'Applies to all tickets')),
             ],
-            options={
-                'permissions': (('view_promocode', 'Can view promo code'),),
-            },
         ),
         migrations.CreateModel(
             name='Question',
@@ -129,20 +108,14 @@ class Migration(migrations.Migration):
                 ('active', models.BooleanField(default=False)),
                 ('applies_to_all', models.BooleanField(default=False, help_text=b'Applies to all tickets')),
             ],
-            options={
-                'permissions': (('view_question', 'Can view question'),),
-            },
         ),
         migrations.CreateModel(
             name='Reprint',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('count', models.IntegerField()),
-                ('attendee', models.ForeignKey(to='reg6.Attendee')),
+                ('attendee', models.ForeignKey(to='reg6.Attendee', on_delete=models.DO_NOTHING)),
             ],
-            options={
-                'permissions': (('view_reprint', 'Can view reprint'),),
-            },
         ),
         migrations.CreateModel(
             name='ScannedBadge',
@@ -173,52 +146,46 @@ class Migration(migrations.Migration):
                 ('start_date', models.DateField(help_text=b'Available on this day', null=True, blank=True)),
                 ('end_date', models.DateField(help_text=b'Not Usable on this day', null=True, blank=True)),
             ],
-            options={
-                'permissions': (('view_ticket', 'Can view ticket'),),
-            },
         ),
         migrations.CreateModel(
             name='Upgrade',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('valid', models.BooleanField(default=False)),
-                ('attendee', models.ForeignKey(to='reg6.Attendee')),
-                ('new_badge_type', models.ForeignKey(to='reg6.Ticket')),
-                ('new_order', models.ForeignKey(blank=True, to='reg6.Order', null=True)),
+                ('attendee', models.ForeignKey(to='reg6.Attendee', on_delete=models.DO_NOTHING)),
+                ('new_badge_type', models.ForeignKey(to='reg6.Ticket', on_delete=models.DO_NOTHING)),
+                ('new_order', models.ForeignKey(blank=True, to='reg6.Order', null=True, on_delete=models.DO_NOTHING)),
                 ('new_ordered_items', models.ManyToManyField(to='reg6.Item', blank=True)),
-                ('old_badge_type', models.ForeignKey(related_name='old_badge_type', to='reg6.Ticket')),
-                ('old_order', models.ForeignKey(related_name='old_order', to='reg6.Order')),
+                ('old_badge_type', models.ForeignKey(related_name='old_badge_type', to='reg6.Ticket', on_delete=models.DO_NOTHING)),
+                ('old_order', models.ForeignKey(related_name='old_order', to='reg6.Order', on_delete=models.DO_NOTHING)),
                 ('old_ordered_items', models.ManyToManyField(related_name='old_ordered_items', to='reg6.Item', blank=True)),
             ],
-            options={
-                'permissions': (('view_upgrade', 'Can view upgrade'),),
-            },
         ),
         migrations.CreateModel(
             name='ListAnswer',
             fields=[
-                ('answer_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='reg6.Answer')),
+                ('answer_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='reg6.Answer', on_delete=models.DO_NOTHING)),
             ],
             bases=('reg6.answer',),
         ),
         migrations.CreateModel(
             name='ListQuestion',
             fields=[
-                ('question_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='reg6.Question')),
+                ('question_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='reg6.Question', on_delete=models.DO_NOTHING)),
             ],
             bases=('reg6.question',),
         ),
         migrations.CreateModel(
             name='TextAnswer',
             fields=[
-                ('answer_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='reg6.Answer')),
+                ('answer_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='reg6.Answer', on_delete=models.DO_NOTHING)),
             ],
             bases=('reg6.answer',),
         ),
         migrations.CreateModel(
             name='TextQuestion',
             fields=[
-                ('question_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='reg6.Question')),
+                ('question_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='reg6.Question', on_delete=models.DO_NOTHING)),
                 ('max_length', models.IntegerField()),
             ],
             bases=('reg6.question',),
@@ -226,7 +193,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='temporder',
             name='upgrade',
-            field=models.ForeignKey(blank=True, to='reg6.Upgrade', null=True),
+            field=models.ForeignKey(blank=True, to='reg6.Upgrade', null=True, on_delete=models.DO_NOTHING),
         ),
         migrations.AddField(
             model_name='question',
@@ -251,12 +218,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='coupon',
             name='badge_type',
-            field=models.ForeignKey(to='reg6.Ticket'),
+            field=models.ForeignKey(to='reg6.Ticket', on_delete=models.DO_NOTHING),
         ),
         migrations.AddField(
             model_name='coupon',
             name='order',
-            field=models.ForeignKey(to='reg6.Order'),
+            field=models.ForeignKey(to='reg6.Order', on_delete=models.DO_NOTHING),
         ),
         migrations.AddField(
             model_name='attendee',
@@ -266,12 +233,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='attendee',
             name='badge_type',
-            field=models.ForeignKey(to='reg6.Ticket'),
+            field=models.ForeignKey(to='reg6.Ticket', on_delete=models.DO_NOTHING),
         ),
         migrations.AddField(
             model_name='attendee',
             name='order',
-            field=models.ForeignKey(blank=True, to='reg6.Order', null=True),
+            field=models.ForeignKey(blank=True, to='reg6.Order', null=True, on_delete=models.DO_NOTHING),
         ),
         migrations.AddField(
             model_name='attendee',
@@ -281,11 +248,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='attendee',
             name='promo',
-            field=models.ForeignKey(blank=True, to='reg6.PromoCode', null=True),
+            field=models.ForeignKey(blank=True, to='reg6.PromoCode', null=True, on_delete=models.DO_NOTHING),
         ),
         migrations.AddField(
             model_name='answer',
             name='question',
-            field=models.ForeignKey(to='reg6.Question'),
+            field=models.ForeignKey(to='reg6.Question', on_delete=models.DO_NOTHING),
         ),
     ]

@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 
 from scalereg.common import utils
 from scalereg.reg6 import forms, models, validators
@@ -285,17 +285,17 @@ def FindUpgradeAttendee(attendee_id, attendee_email):
 
 def HandleBadUpgrade(request, not_found, not_paid, not_eligible):
   if not_found:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'Invalid upgrade: Attendee not found'
       })
   if not_paid:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'Invalid upgrade: Unpaid attendee'
       })
   if not_eligible:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'Invalid upgrade: Ineligible attendee'
       })
@@ -391,13 +391,13 @@ def CheckPaymentAmount(request, expected_cost):
 def CheckVars(request, post, cookies):
   for var in post:
     if var not in request.POST:
-      return scale_render_to_response(request, 'reg6/reg_error.html',
+      return scale_render_to_response(request, request, 'reg6/reg_error.html',
         {'title': 'Registration Problem',
          'error_message': 'No %s information.' % var,
         })
   for var in cookies:
     if var not in request.session:
-      return scale_render_to_response(request, 'reg6/reg_error.html',
+      return scale_render_to_response(request, request, 'reg6/reg_error.html',
         {'title': 'Registration Problem',
          'error_message': 'No %s information.' % var,
         })
@@ -449,7 +449,7 @@ def DoCheckIn(request, attendee):
   except:
     return HttpResponseServerError('We encountered a problem with your checkin')
 
-  return scale_render_to_response(request, 'reg6/reg_finish_checkin.html',
+  return scale_render_to_response(request, request, 'reg6/reg_finish_checkin.html',
     {'title': 'Checked In',
      'attendee': attendee,
     })
@@ -470,7 +470,7 @@ def IsRequestFromKioskOrOutside(request):
 def scale_render_to_response(request, template, vars):
   if 'kiosk' in request.session:
     vars['kiosk'] = True
-  return render_to_response(template, vars)
+  return render(request, template, vars)
 
 
 def index(request):
@@ -504,14 +504,14 @@ def index(request):
 
     user_agent = GetUserAgentFromRequest(request)
     if settings.SCALEREG_KIOSK_AGENT_SECRET not in user_agent:
-      return render_to_response('reg6/reg_kiosk.html')
+      return render(request, 'reg6/reg_kiosk.html')
 
     kiosk_idx = user_agent.find(settings.SCALEREG_KIOSK_AGENT_SECRET) + \
         len(settings.SCALEREG_KIOSK_AGENT_SECRET)
     truncated_user_agent = user_agent[kiosk_idx:]
-    return render_to_response('reg6/reg_kiosk.html', {'agent': truncated_user_agent})
+    return render(request, 'reg6/reg_kiosk.html', {'agent': truncated_user_agent})
 
-  return scale_render_to_response(request, 'reg6/reg_index.html',
+  return scale_render_to_response(request, request, 'reg6/reg_index.html',
     {'title': 'Registration',
      'tickets': avail_tickets,
      'promo': promo_name,
@@ -522,7 +522,7 @@ def index(request):
 
 def kiosk_index(request):
   if request.method == 'POST':
-    return render_to_response('reg6/reg_kiosk_clear.html', {})
+    return render(request, 'reg6/reg_kiosk_clear.html', {})
 
   if 'clear' in request.GET:
     if 'attendee' in request.session:
@@ -530,8 +530,8 @@ def kiosk_index(request):
     if REGISTRATION_PAYMENT_COOKIE in request.session:
       request.session.pop(REGISTRATION_PAYMENT_COOKIE)
     request.session['kiosk'] = True
-    return render_to_response('reg6/reg_kiosk.html')
-  return render_to_response('reg6/reg_kiosk_clear.html', {})
+    return render(request, 'reg6/reg_kiosk.html')
+  return render(request, 'reg6/reg_kiosk_clear.html', {})
 
 
 def AddItems(request):
@@ -559,7 +559,7 @@ def AddItems(request):
   items = GetTicketItems(ticket[0])
   ApplyPromoToItems(promo_in_use, items)
 
-  return scale_render_to_response(request, 'reg6/reg_items.html',
+  return scale_render_to_response(request, request, 'reg6/reg_items.html',
     {'title': 'Registration - Add Items',
      'ticket': ticket[0],
      'promo': promo_name,
@@ -591,12 +591,12 @@ def AddAttendee(request):
   try:
     ticket = models.Ticket.public_objects.get(name=request.POST['ticket'])
   except models.Ticket.DoesNotExist:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'You have selected an invalid ticket type.',
       })
   if not IsTicketAvailable(ticket, 1):
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'The ticket you selected is sold out.',
       })
@@ -618,14 +618,14 @@ def AddAttendee(request):
     form = forms.AttendeeForm()
   else:
     if 'attendee' in request.session and request.session['attendee']:
-      return scale_render_to_response(request, 'reg6/reg_error.html',
+      return scale_render_to_response(request, request, 'reg6/reg_error.html',
         {'title': 'Registration Problem',
          'error_message': 'You already added this attendee.',
         })
     form = forms.AttendeeForm(request.POST)
     if form.is_valid():
       if not request.session.test_cookie_worked():
-        return scale_render_to_response(request, 'reg6/reg_error.html',
+        return scale_render_to_response(request, request, 'reg6/reg_error.html',
           {'title': 'Registration Problem',
            'error_message': 'Please do not register multiple attendees at the same time. Please make sure you have cookies enabled.',
           })
@@ -702,7 +702,7 @@ def AddAttendee(request):
         pgp_questions.append(questions.pop(i))
     pgp_questions.reverse()
 
-  return scale_render_to_response(request, 'reg6/reg_attendee.html',
+  return scale_render_to_response(request, request, 'reg6/reg_attendee.html',
     {'title': 'Register Attendee',
      'ticket': ticket,
      'promo': promo_name,
@@ -734,7 +734,7 @@ def RegisteredAttendee(request):
 
   attendee = models.Attendee.objects.get(id=request.session['attendee'])
 
-  return scale_render_to_response(request, 'reg6/reg_finish.html',
+  return scale_render_to_response(request, request, 'reg6/reg_finish.html',
     {'title': 'Attendee Registered (Payment still required)',
      'attendee': attendee,
      'step': 4,
@@ -816,7 +816,7 @@ def StartPayment(request):
   for person in all_attendees_data:
     total += person.ticket_cost()
 
-  return scale_render_to_response(request, 'reg6/reg_start_payment.html',
+  return scale_render_to_response(request, request, 'reg6/reg_start_payment.html',
     {'title': 'Place Your Order',
      'bad_attendee': bad_attendee,
      'new_attendee': new_attendee,
@@ -871,7 +871,7 @@ def Payment(request):
     if not IsTicketAvailable(ticket, num_to_buy):
       tickets_soldout.append(ticket.description)
   if tickets_soldout:
-    return scale_render_to_response(request, 'reg6/reg_payment.html',
+    return scale_render_to_response(request, request, 'reg6/reg_payment.html',
       {'title': 'Registration Payment',
        'step': PAYMENT_STEP,
        'steps_total': STEPS_TOTAL,
@@ -896,12 +896,12 @@ def Payment(request):
     except: # FIXME catch the specific db exceptions
       order_tries += 1
       if order_tries > 10:
-        return scale_render_to_response(request, 'reg6/reg_error.html',
+        return scale_render_to_response(request, request, 'reg6/reg_error.html',
           {'title': 'Registration Problem',
            'error_message': 'We cannot generate an order ID for you.',
           })
 
-  return scale_render_to_response(request, 'reg6/reg_payment.html',
+  return scale_render_to_response(request, request, 'reg6/reg_payment.html',
     {'title': 'Registration Payment',
      'attendees': all_attendees_data,
      'order': order_num,
@@ -1061,7 +1061,7 @@ def Sale(request):
 
 
 def FailedPayment(request):
-  return scale_render_to_response(request, 'reg6/reg_failed.html',
+  return scale_render_to_response(request, request, 'reg6/reg_failed.html',
     {'title': 'Registration Payment Failed',
     })
 
@@ -1097,7 +1097,7 @@ def FinishPayment(request):
     return HttpResponseServerError('Your registration order cannot be found')
 
   if temp_order.upgrade:
-    return scale_render_to_response(request, 'reg6/reg_receipt_upgrade.html',
+    return scale_render_to_response(request, request, 'reg6/reg_receipt_upgrade.html',
       {'title': 'Registration Payment Receipt',
        'name': request.POST['NAME'],
        'email': request.POST['EMAIL'],
@@ -1109,7 +1109,7 @@ def FinishPayment(request):
   all_attendees_data = models.Attendee.objects.filter(order=order.order_num)
   already_paid_attendees_data = order.already_paid_attendees
 
-  return scale_render_to_response(request, 'reg6/reg_receipt.html',
+  return scale_render_to_response(request, request, 'reg6/reg_receipt.html',
     {'title': 'Registration Payment Receipt',
      'name': request.POST['NAME'],
      'email': request.POST['EMAIL'],
@@ -1124,13 +1124,13 @@ def FinishPayment(request):
 
 def StartUpgrade(request):
   if request.method != 'POST':
-    return scale_render_to_response(request, 'reg6/reg_start_upgrade.html',
+    return scale_render_to_response(request, request, 'reg6/reg_start_upgrade.html',
       {'title': 'Registration Upgrade',
       })
 
   # POST, look for attendee first.
   if 'id' not in request.POST or 'email' not in request.POST:
-    return scale_render_to_response(request, 'reg6/reg_start_upgrade.html',
+    return scale_render_to_response(request, request, 'reg6/reg_start_upgrade.html',
       {'title': 'Registration Upgrade',
       })
 
@@ -1138,7 +1138,7 @@ def StartUpgrade(request):
     FindUpgradeAttendee(request.POST['id'], request.POST['email'])
 
   if not_found or not_paid or not_eligible:
-    return scale_render_to_response(request, 'reg6/reg_start_upgrade.html',
+    return scale_render_to_response(request, request, 'reg6/reg_start_upgrade.html',
       {'title': 'Registration Upgrade',
        'email': request.POST['email'],
        'id': request.POST['id'],
@@ -1153,7 +1153,7 @@ def StartUpgrade(request):
   if 'has_selected_items' in request.POST and 'ticket' in request.POST:
     tickets = models.Ticket.objects.filter(name=request.POST['ticket'])
     if len(tickets) != 1:
-      return scale_render_to_response(request, 'reg6/reg_error.html',
+      return scale_render_to_response(request, request, 'reg6/reg_error.html',
         {'title': 'Registration Problem',
          'error_message': 'You have selected an invalid ticket type.',
         })
@@ -1165,7 +1165,7 @@ def StartUpgrade(request):
     upgrade_cost = total - attendee.ticket_cost()
     unchanged = IsUpgradeUnchanged(attendee, selected_ticket, selected_items)
 
-    return scale_render_to_response(request, 'reg6/reg_start_upgrade.html',
+    return scale_render_to_response(request, request, 'reg6/reg_start_upgrade.html',
       {'title': 'Registration Upgrade',
        'attendee': attendee,
        'has_selected_items': True,
@@ -1180,7 +1180,7 @@ def StartUpgrade(request):
   if 'ticket' in request.POST:
     tickets = models.Ticket.objects.filter(name=request.POST['ticket'])
     if len(tickets) != 1:
-      return scale_render_to_response(request, 'reg6/reg_error.html',
+      return scale_render_to_response(request, request, 'reg6/reg_error.html',
         {'title': 'Registration Problem',
          'error_message': 'You have selected an invalid ticket type.',
         })
@@ -1188,7 +1188,7 @@ def StartUpgrade(request):
     selected_ticket = tickets[0]
     items = GetTicketItems(selected_ticket)
     ApplyPromoToItems(attendee.promo, items)
-    return scale_render_to_response(request, 'reg6/reg_start_upgrade.html',
+    return scale_render_to_response(request, request, 'reg6/reg_start_upgrade.html',
       {'title': 'Registration Upgrade',
        'attendee': attendee,
        'items': items,
@@ -1201,7 +1201,7 @@ def StartUpgrade(request):
                    if (IsTicketAvailable(ticket, 1) and
                        ticket != attendee.badge_type)]
   ApplyPromoToTickets(attendee.promo, avail_tickets)
-  return scale_render_to_response(request, 'reg6/reg_start_upgrade.html',
+  return scale_render_to_response(request, request, 'reg6/reg_start_upgrade.html',
     {'title': 'Registration Upgrade',
      'attendee': attendee,
      'tickets': avail_tickets,
@@ -1233,7 +1233,7 @@ def NonFreeUpgrade(request):
   # Valid attendee found.
   tickets = models.Ticket.objects.filter(name=request.POST['ticket'])
   if len(tickets) != 1:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'Invalid upgrade: Invalid ticket type.',
       })
@@ -1247,7 +1247,7 @@ def NonFreeUpgrade(request):
   # Check for unchanged registration
   unchanged = IsUpgradeUnchanged(attendee, selected_ticket, selected_items)
   if unchanged:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'Invalid upgrade: Unchanged attendee.',
       })
@@ -1255,7 +1255,7 @@ def NonFreeUpgrade(request):
   try:
     upgrade = CreateUpgrade(attendee, selected_ticket, selected_items)
   except: # FIXME catch the specific db exceptions
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'Cannot save upgrade',
       })
@@ -1273,13 +1273,13 @@ def NonFreeUpgrade(request):
     except: # FIXME catch the specific db exceptions
       order_tries += 1
       if order_tries > 10:
-        return scale_render_to_response(request, 'reg6/reg_error.html',
+        return scale_render_to_response(request, request, 'reg6/reg_error.html',
           {'title': 'Registration Problem',
            'error_message': 'We cannot generate an order ID for you.',
           })
 
   RecordAttendeeAgent(attendee, GetUserAgentFromRequest(request))
-  return scale_render_to_response(request, 'reg6/reg_non_free_upgrade.html',
+  return scale_render_to_response(request, request, 'reg6/reg_non_free_upgrade.html',
     {'title': 'Registration Upgrade',
      'attendee': attendee,
      'order': order_num,
@@ -1312,7 +1312,7 @@ def FreeUpgrade(request):
   # Valid attendee found.
   tickets = models.Ticket.objects.filter(name=request.POST['ticket'])
   if len(tickets) != 1:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'Invalid upgrade: Invalid ticket type.',
       })
@@ -1323,7 +1323,7 @@ def FreeUpgrade(request):
   (total, offset_item) = CalculateTicketCost(selected_ticket, selected_items)
   upgrade_cost = total - attendee.ticket_cost()
   if upgrade_cost > 0:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'Invalid upgrade: Not Free.',
       })
@@ -1331,7 +1331,7 @@ def FreeUpgrade(request):
   try:
     upgrade = CreateUpgrade(attendee, selected_ticket, selected_items)
   except: # FIXME catch the specific db exceptions
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'Cannot save upgrade',
       })
@@ -1359,14 +1359,14 @@ def FreeUpgrade(request):
     except: # FIXME catch the specific db exceptions
       order_tries += 1
       if order_tries > 10:
-        return scale_render_to_response(request, 'reg6/reg_error.html',
+        return scale_render_to_response(request, request, 'reg6/reg_error.html',
           {'title': 'Registration Problem',
            'error_message': 'We cannot generate an order ID for you.',
           })
 
   at_kiosk = 'USER2' in request.POST and request.POST['USER2'] == 'Y'
   UpgradeAttendee(upgrade, order, at_kiosk)
-  return scale_render_to_response(request, 'reg6/reg_receipt_upgrade.html',
+  return scale_render_to_response(request, request, 'reg6/reg_receipt_upgrade.html',
     {'title': 'Registration Payment Receipt',
      'name': attendee.full_name(),
      'email': attendee.email,
@@ -1378,7 +1378,7 @@ def FreeUpgrade(request):
 
 def RegLookup(request):
   if request.method != 'POST':
-    return scale_render_to_response(request, 'reg6/reg_lookup.html',
+    return scale_render_to_response(request, request, 'reg6/reg_lookup.html',
       {'title': 'Registration Lookup',
       })
 
@@ -1396,7 +1396,7 @@ def RegLookup(request):
     attendees = models.Attendee.objects.filter(zip=request.POST['zip'].strip(),
         email=request.POST['email'].strip())
 
-  return scale_render_to_response(request, 'reg6/reg_lookup.html',
+  return scale_render_to_response(request, request, 'reg6/reg_lookup.html',
     {'title': 'Registration Lookup',
      'attendees': attendees,
      'email': request.POST['email'],
@@ -1412,9 +1412,9 @@ def CheckIn(request):
   if request.method == 'GET':
     if 'kiosk' in request.GET:
       request.session['kiosk'] = True
-      return render_to_response('reg6/reg_kiosk.html')
+      return render(request, 'reg6/reg_kiosk.html')
 
-    return scale_render_to_response(request, 'reg6/reg_checkin.html',
+    return scale_render_to_response(request, request, 'reg6/reg_checkin.html',
       {'title': 'Check In',
       })
 
@@ -1434,12 +1434,12 @@ def CheckIn(request):
 
     if success:
       if attendee.checked_in:
-        return scale_render_to_response(request, 'reg6/reg_checkin.html',
+        return scale_render_to_response(request, request, 'reg6/reg_checkin.html',
           {'title': 'Check In',
            'reprint': True,
           })
       return DoCheckIn(request, attendee)
-    return scale_render_to_response(request, 'reg6/reg_checkin.html',
+    return scale_render_to_response(request, request, 'reg6/reg_checkin.html',
       {'title': 'Check In',
        'express_code': code,
        'express_fail': True,
@@ -1472,7 +1472,7 @@ def CheckIn(request):
       if not has_email_or_zip:
         attendees = []
 
-  return scale_render_to_response(request, 'reg6/reg_checkin.html',
+  return scale_render_to_response(request, request, 'reg6/reg_checkin.html',
     {'title': 'Check In',
      'attendees': attendees,
      'first': request.POST['first'],
@@ -1528,13 +1528,13 @@ def RedeemCoupon(request):
   try:
     coupon = models.Coupon.objects.get(code=request.POST['code'].strip())
   except models.Coupon.DoesNotExist:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'Invalid coupon'
       })
 
   if not coupon.is_valid():
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'This coupon has expired'
       })
@@ -1542,14 +1542,14 @@ def RedeemCoupon(request):
   try:
     temp_order = models.TempOrder.objects.get(order_num=request.POST['order'])
   except models.TempOrder.DoesNotExist:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'cannot get temp order'
       })
 
   num_attendees = len(temp_order.attendees_list())
   if num_attendees > coupon.max_attendees:
-    return scale_render_to_response(request, 'reg6/reg_error.html',
+    return scale_render_to_response(request, request, 'reg6/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'coupon not valid for the number of attendees'
       })
@@ -1584,7 +1584,7 @@ def RedeemCoupon(request):
     coupon.used = True
   coupon.save()
 
-  return scale_render_to_response(request, 'reg6/reg_receipt.html',
+  return scale_render_to_response(request, request, 'reg6/reg_receipt.html',
     {'title': 'Registration Payment Receipt',
      'attendees': all_attendees_data,
      'coupon_code': request.POST['code'],
@@ -1623,7 +1623,7 @@ def AddCoupon(request):
       for t in temp_tickets:
         tickets.append(t)
     form = forms.AddCouponForm()
-    return scale_render_to_response(request, 'reg6/add_coupon.html',
+    return scale_render_to_response(request, request, 'reg6/add_coupon.html',
       {'title': 'Add Coupon',
        'form': form,
        'tickets': tickets,
@@ -2026,7 +2026,7 @@ def ScannedBadge(request):
 
   returl = 'https://%s/reg6/scanned_badge/?CODE={CODE}' % request.get_host()
   url = 'zxing://scan/?ret=%s' % urllib.parse.quote_plus(returl)
-  return render_to_response('reg6/scanned_badge.html',
+  return render(request, 'reg6/scanned_badge.html',
     {'color': color,
      'response': response,
      'url': url,

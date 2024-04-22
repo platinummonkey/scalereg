@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import BooleanField
 from django.db.models.base import ModelBase
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import loader
 from django.views.generic.list import ListView as django_object_list
 
@@ -99,7 +99,7 @@ def index(request):
                         'url': 'announce_subscribers/'})
   model_list.insert(2, {'name': 'Coupon Usage', 'url': 'coupon_usage/'})
 
-  return render_to_response('reports/index.html',
+  return render(request, 'reports/index.html',
     {'user': request.user, 'title': 'Reports', 'model_list': model_list})
 
 @login_required
@@ -320,7 +320,7 @@ def dashboard(request):
     zip.CalcPercentage(num_attendees)
   unique_addon_attendees_data.CalcPercentage(num_attendees)
 
-  return render_to_response('reports/dashboard.html',
+  return render(request, 'reports/dashboard.html',
     {'title': 'Dashboard',
      'addon_attendees': addon_attendees_data,
      'attendees': attendees_data,
@@ -758,7 +758,7 @@ def CouponUsage(request):
         order=coupon.order).filter(valid=True).count()
     coupon_data.append(datum)
 
-  return render_to_response('reports/coupon_usage.html',
+  return render(request, 'reports/coupon_usage.html',
     {'title': 'Coupon Usage',
      'coupons': coupon_data,
     })

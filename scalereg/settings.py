@@ -23,7 +23,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # 'django.db.backends.mysql', 'django.db.backends.postgresql', 'django.db.backends.sqlite3', or 'django.db.backends.oracle'
-        'NAME': '/CHANGE_THIS!!!!!__path_to/sqlite.db',  # Or path to database file if using sqlite3.
+        'NAME': os.getenv("HOME") + '/scalereg-sqlite.db',  # Or path to database file if using sqlite3.
         'USER': '', # Not used with sqlite3.
         'PASSWORD': '',  # Not used with sqlite3.
         'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
@@ -67,7 +67,7 @@ STATIC_URL = 'https://register.socallinuxexpo.org/media/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'CHANGE_THIS!!!!!__ANY_VALID_PYTHON_STRING_WORKS'
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -80,30 +80,36 @@ ROOT_URLCONF = 'scalereg.urls'
 TEMPLATES = [
   {
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'APP_DIRS': True,
     'DIRS': [
-      '/CHANGE_THIS!!!!!__/path/to/your/templates/',
-      '/CHANGE_THIS!!!!!__/paht/to/django/contrib/admin/templates/'
+        BASE_DIR + "scalereg/scale_templates",
+        BASE_DIR + "scalereg/scale_templates/admin",
+        BASE_DIR + "scalereg/scale_templates/profile",
+        BASE_DIR + "scalereg/scale_templates/reg6",
+        BASE_DIR + "scalereg/scale_templates/reports",
+        BASE_DIR + "scalereg/scale_templates/sponsorship",
     ],
     'OPTIONS': {
       'context_processors': [
         'django.contrib.messages.context_processors.messages',
         'django.contrib.auth.context_processors.auth',
+        'django.template.context_processors.request',
       ]
     },
   },
 ]
 
 INSTALLED_APPS = (
+    'scalereg.auth_helper',
+    'scalereg.reg6',
+    'scalereg.reports',
+    'scalereg.sponsorship',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'scalereg.auth_helper',
-    'scalereg.reg6',
-    'scalereg.reports',
-    'scalereg.sponsorship',
 )
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -157,3 +163,6 @@ SCALEREG_ADMIN_TICKETS_FOR_PROMO = []
 
 # Increasing limit to work around Django bug with TemporaryFileUploadHandler.
 #FILE_UPLOAD_MAX_MEMORY_SIZE = 20971520  # 20 MB
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+

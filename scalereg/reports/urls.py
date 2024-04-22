@@ -1,4 +1,4 @@
-from django.conf.urls import *
+from django.urls import re_path
 
 from scalereg.reg6 import models
 from scalereg.reports import views as reports_views
@@ -6,7 +6,7 @@ from scalereg.reports import views as reports_views
 answer_dict = {
     'queryset': models.Answer.objects.all(),
     'extra_context': {
-    'opts': models.Answer._meta,
+        'opts': models.Answer._meta,
     },
     'allow_empty': True,
 }
@@ -14,9 +14,9 @@ answer_dict = {
 attendee_dict = {
     'queryset': models.Attendee.objects.all(),
     'extra_context': {
-    'valid': models.Attendee.objects.all().filter(valid=True).count(),
-    'checkin': models.Attendee.objects.all().filter(checked_in=True).count(),
-    'opts': models.Attendee._meta,
+        'valid': models.Attendee.objects.all().filter(valid=True).count(),
+        'checkin': models.Attendee.objects.all().filter(checked_in=True).count(),
+        'opts': models.Attendee._meta,
     },
     'allow_empty': True,
 }
@@ -24,7 +24,7 @@ attendee_dict = {
 coupon_dict = {
     'queryset': models.Coupon.objects.all(),
     'extra_context': {
-    'opts': models.Coupon._meta,
+        'opts': models.Coupon._meta,
     },
     'allow_empty': True,
 }
@@ -32,7 +32,7 @@ coupon_dict = {
 item_dict = {
     'queryset': models.Item.objects.all(),
     'extra_context': {
-    'opts': models.Item._meta,
+        'opts': models.Item._meta,
     },
     'allow_empty': True,
 }
@@ -40,8 +40,8 @@ item_dict = {
 order_dict = {
     'queryset': models.Order.objects.all(),
     'extra_context': {
-    'opts': models.Order._meta,
-    'total': sum([x.amount for x in models.Order.objects.all().filter(valid=True)]),
+        'opts': models.Order._meta,
+        'total': sum([x.amount for x in models.Order.objects.all().filter(valid=True)]),
     },
     'allow_empty': True,
 }
@@ -49,7 +49,7 @@ order_dict = {
 promocode_dict = {
     'queryset': models.PromoCode.objects.all(),
     'extra_context': {
-    'opts': models.PromoCode._meta,
+        'opts': models.PromoCode._meta,
     },
     'allow_empty': True,
 }
@@ -57,7 +57,7 @@ promocode_dict = {
 question_dict = {
     'queryset': models.Question.objects.all(),
     'extra_context': {
-    'opts': models.Question._meta,
+        'opts': models.Question._meta,
     },
     'allow_empty': True,
 }
@@ -65,28 +65,28 @@ question_dict = {
 ticket_dict = {
     'queryset': models.Ticket.objects.all(),
     'extra_context': {
-    'opts': models.Ticket._meta,
+        'opts': models.Ticket._meta,
     },
     'allow_empty': True,
 }
 
 urlpatterns = [
-    url(r'^$', reports_views.index),
-    url(r'^answer/$', reports_views.object_list, answer_dict),
-    url(r'^attendee/$', reports_views.object_list, attendee_dict),
-    url(r'^coupon/$', reports_views.object_list, coupon_dict),
-    url(r'^item/$', reports_views.object_list, item_dict),
-    url(r'^order/$', reports_views.object_list, order_dict),
-    url(r'^promocode/$', reports_views.object_list, promocode_dict),
-    url(r'^question/$', reports_views.object_list, question_dict),
-    url(r'^ticket/$', reports_views.object_list, ticket_dict),
-    url(r'^reg6log/$', reports_views.reg6log),
-    url(r'^dashboard/$', reports_views.dashboard),
-    url(r'^badorder/$', reports_views.badorder),
-    url(r'^getleads/$', reports_views.getleads),
-    url(r'^getpgp/$', reports_views.getpgp),
-    url(r'^putpgp/$', reports_views.putpgp),
-    url(r'^checkpgp/$', reports_views.checkpgp),
-    url(r'^announce_subscribers/$', reports_views.AnnounceSubscribers),
-    url(r'^coupon_usage/$', reports_views.CouponUsage),
+    re_path(r'^$', reports_views.index),
+    re_path(r'^answer/$', reports_views.object_list, answer_dict),
+    re_path(r'^attendee/$', reports_views.object_list, attendee_dict),
+    re_path(r'^coupon/$', reports_views.object_list, coupon_dict),
+    re_path(r'^item/$', reports_views.object_list, item_dict),
+    re_path(r'^order/$', reports_views.object_list, order_dict),
+    re_path(r'^promocode/$', reports_views.object_list, promocode_dict),
+    re_path(r'^question/$', reports_views.object_list, question_dict),
+    re_path(r'^ticket/$', reports_views.object_list, ticket_dict),
+    re_path(r'^reg6log/$', reports_views.reg6log),
+    re_path(r'^dashboard/$', reports_views.dashboard),
+    re_path(r'^badorder/$', reports_views.badorder),
+    re_path(r'^getleads/$', reports_views.getleads),
+    re_path(r'^getpgp/$', reports_views.getpgp),
+    re_path(r'^putpgp/$', reports_views.putpgp),
+    re_path(r'^checkpgp/$', reports_views.checkpgp),
+    re_path(r'^announce_subscribers/$', reports_views.AnnounceSubscribers),
+    re_path(r'^coupon_usage/$', reports_views.CouponUsage),
 ]

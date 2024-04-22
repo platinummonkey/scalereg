@@ -5,7 +5,7 @@ import sys
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 
 from scalereg.common import utils
 from scalereg.sponsorship import forms, models
@@ -114,13 +114,13 @@ def CheckPaymentAmount(request, expected_cost):
 def CheckVars(request, post, cookies):
   for var in post:
     if var not in request.POST:
-      return render_to_response('sponsorship/reg_error.html',
+      return render(request, 'sponsorship/reg_error.html',
         {'title': 'Registration Problem',
          'error_message': 'No %s information.' % var,
         })
   for var in cookies:
     if var not in request.session:
-      return render_to_response('sponsorship/reg_error.html',
+      return render(request, 'sponsorship/reg_error.html',
         {'title': 'Registration Problem',
          'error_message': 'No %s information.' % var,
         })
@@ -158,7 +158,7 @@ def index(request):
 
   request.session.set_test_cookie()
 
-  return render_to_response('sponsorship/reg_index.html',
+  return render(request, 'sponsorship/reg_index.html',
     {'title': 'Sponsorship',
      'packages': avail_packages,
      'promo': promo_name,
@@ -192,7 +192,7 @@ def AddItems(request):
   items = GetPackageItems(package[0])
   ApplyPromoToItems(promo_in_use, items)
 
-  return render_to_response('sponsorship/reg_items.html',
+  return render(request, 'sponsorship/reg_items.html',
     {'title': 'Sponsorship - Add Items',
      'package': package[0],
      'promo': promo_name,
@@ -224,7 +224,7 @@ def AddSponsor(request):
   try:
     package = models.Package.public_objects.get(name=request.POST['package'])
   except models.Package.DoesNotExist:
-    return render_to_response('sponsorship/reg_error.html',
+    return render(request, 'sponsorship/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'You have selected an invalid package type.',
       })
@@ -246,7 +246,7 @@ def AddSponsor(request):
     form = forms.SponsorForm(request.POST)
     if form.is_valid():
       if not request.session.test_cookie_worked():
-        return render_to_response('sponsorship/reg_error.html',
+        return render(request, 'sponsorship/reg_error.html',
           {'title': 'Registration Problem',
            'error_message': 'Please do not register multiple sponsors at the same time. Please make sure you have cookies enabled.',
           })
@@ -271,7 +271,7 @@ def AddSponsor(request):
 
       return HttpResponseRedirect('/sponsorship/payment/')
 
-  return render_to_response('sponsorship/reg_sponsor.html',
+  return render(request, 'sponsorship/reg_sponsor.html',
     {'title': 'Sponsorship - Register Sponsor',
      'package': package,
      'promo': promo_name,
@@ -308,7 +308,7 @@ def Payment(request):
     pass
 
   if not sponsor:
-    return render_to_response('sponsorship/reg_error.html',
+    return render(request, 'sponsorship/reg_error.html',
       {'title': 'Registration Problem',
        'error_message': 'No sponsor to pay for.',
       })
@@ -327,12 +327,12 @@ def Payment(request):
       raise
       order_tries += 1
       if order_tries > 10:
-        return render_to_response('sponsorship/reg_error.html',
+        return render(request, 'sponsorship/reg_error.html',
           {'title': 'Registration Problem',
            'error_message': 'We cannot generate an order ID for you.',
           })
 
-  return render_to_response('sponsorship/reg_payment.html',
+  return render(request, 'sponsorship/reg_payment.html',
     {'title': 'Sponsorship - Payment',
      'sponsor': sponsor,
      'order': order_num,
@@ -438,7 +438,7 @@ def Sale(request):
 
 
 def FailedPayment(request):
-  return render_to_response('sponsorship/reg_failed.html',
+  return render(request, 'sponsorship/reg_failed.html',
     {'title': 'Sponsorship Payment Failed',
     })
 
@@ -464,7 +464,7 @@ def FinishPayment(request):
     ScaleDebug('Your sponsorship order cannot be found')
     return HttpResponseServerError('Your sponsorship order cannot be found')
 
-  return render_to_response('sponsorship/reg_receipt.html',
+  return render(request, 'sponsorship/reg_receipt.html',
     {'title': 'Sponsorship - Payment Receipt',
      'name': request.POST['NAME'],
      'email': request.POST['EMAIL'],

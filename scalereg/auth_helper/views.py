@@ -2,7 +2,7 @@
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 
 from scalereg.auth_helper.models import Service
 
@@ -31,7 +31,7 @@ def profile(request):
       services.append(f)
     services = set(services + services_group)
 
-  return render_to_response('profile/index.html',
+  return render(request, 'profile/index.html',
     {'root_path': '/admin/',
      'services': services,
      'title': 'Available Services',

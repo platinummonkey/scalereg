@@ -8,8 +8,7 @@ readme = "README"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-Django = "1.11.28"
-urllib3 = "1.10.2"
+Django = "5.0.4"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.4.4"

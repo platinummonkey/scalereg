@@ -38,7 +38,7 @@ class Order(models.Model):
   result = models.CharField(max_length=60, blank=True)
 
   # sponsor data
-  sponsor = models.OneToOneField('Sponsor')
+  sponsor = models.OneToOneField('Sponsor', on_delete=models.DO_NOTHING)
   already_paid_sponsor = models.BooleanField(default=False)
 
   def __unicode__(self):
@@ -217,7 +217,7 @@ class Item(models.Model):
 class TempOrder(models.Model):
   order_num = models.CharField(max_length=10, primary_key=True,
       help_text='Unique 10 upper-case letters + numbers code')
-  sponsor = models.OneToOneField('Sponsor')
+  sponsor = models.OneToOneField('Sponsor', on_delete=models.DO_NOTHING)
   date = models.DateTimeField(auto_now_add=True)
 
   def __unicode__(self):
@@ -230,7 +230,7 @@ class TempOrder(models.Model):
 
 class Sponsor(models.Model):
   # meta
-  package = models.ForeignKey(Package)
+  package = models.ForeignKey(Package, on_delete=models.DO_NOTHING)
   valid = models.BooleanField(default=False)
 
   # name
@@ -247,7 +247,7 @@ class Sponsor(models.Model):
   phone = models.CharField(max_length=20, blank=True)
 
   # etc
-  promo = models.ForeignKey(PromoCode, blank=True, null=True)
+  promo = models.ForeignKey(PromoCode, blank=True, null=True, on_delete=models.DO_NOTHING)
   agreed = models.BooleanField(default=False)
   ordered_items = models.ManyToManyField(Item, blank=True)
 
