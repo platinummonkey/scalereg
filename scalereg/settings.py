@@ -6,7 +6,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENV = os.environ.get('ENV', 'development')
 
-DEBUG = False
+DEBUG = True
 
 # Additional debug logging for sales transactions
 # Set to True to enable.
@@ -66,7 +66,12 @@ MEDIA_URL = ''
 # Examples: 'http://foo.com/media/', '/media/'.
 ADMIN_MEDIA_PREFIX = '/media/'
 
+STATIC_ROOT = BASE_DIR + '/scalereg/static/'
 STATIC_URL = 'https://register.socallinuxexpo.org/media/'
+if DEBUG or ENV not in ('development', 'ci'):
+    # hacks for local development
+    STATIC_URL = 'static/'
+
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'CHANGE_THIS!!!!!__ANY_VALID_PYTHON_STRING_WORKS'
@@ -123,6 +128,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.staticfiles',
 )
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
